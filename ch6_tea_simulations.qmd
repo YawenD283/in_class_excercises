@@ -35,8 +35,9 @@ This makes "tea data", a tibble (dataframe) where there are a certain number of 
 
 The averages of the two conditions are separated by a known effect ("delta") with some variance ("sigma"). You can change these around since we're simulating data!
 
+## Change the sample size from 48 to 100
 ```{r}
-make_tea_data <- function(n_total = 48, sigma = 1.25, delta = 1.5) {
+make_tea_data <- function(n_total = 100, sigma = 1.25, delta = 1.5) {
   n_half <- n_total / 2
   tibble(condition = c(rep("milk first", n_half), rep("tea first", n_half)),
          rating = c(round(rnorm(n_half, mean = 3.5 + delta, sd = sigma)), 
@@ -48,13 +49,14 @@ make_tea_data <- function(n_total = 48, sigma = 1.25, delta = 1.5) {
 
 ## Make data frames where we have small or larger samples of tea data for ONE experiment
 
+# Change n_total from 18 and 48 to 36 and 96
 ```{r}
 # here's, we're calling our custom functino, and specifying different inputs than the defaults (which are inside the parenthese up above)
-tea_data <- make_tea_data(n_total = 18, delta=1.5)
+tea_data <- make_tea_data(n_total = 36, delta=1.5)
 ```
 
 ```{r}
-tea_data_highn <- make_tea_data(n_total = 48, delta=1.5)
+tea_data_highn <- make_tea_data(n_total = 96, delta=1.5)
 ```
 
 To do: OK, look at these data frames. How long are they, what are the column names? Look at them in your console and in the environment if you want.
@@ -68,6 +70,7 @@ mean1 <- tea_data %>%
 
 mean1
 ```
+By changing the sample size, the mean_rating of milk first among the tea data decreases from 5.11 to 5.00, while that of tea first increases from 3.78 to 3.94. 
 
 ```{r}
 mean2 <- tea_data_highn %>%
@@ -76,6 +79,7 @@ mean2 <- tea_data_highn %>%
 
 mean2
 ```
+By changing the sample size, the mean_rating of milk first among the tea_highn data decreases from 5.04 to 4.67, while that of tea first increases from 3.46 to 3.56. 
 
 ## In this first draw, was it significant with N=9 or N=24 per group?
 
@@ -94,26 +98,32 @@ out_high_n <- tea_data_highn %>%
 ```{r}
 out_low_n
 ```
+The p-value decreased from 0.057 (n_total = 18) to 0.012 (n_total = 36), indicating stronger evidence against the null hypothesis with the larger sample size. The confidence interval and degrees of freedom suggest more precision and accuracy in the estimates. 
+
 ```{r}
 out_high_n
 ```
+Similarly, the p-value decreases, showing stronger evidence of differences provided by a larger sample size. Also, higher precision and accuracy are suggested. 
+
 ### Simulate 1000 experiments
 
 To do: Run these code blocks
 
 ...where you have 18 participants per experiment with an average difference of 1.5 points in tea deliciousness on average
 
+## Change n_total from 18 to 36
 ```{r}
 samps <- tibble(sim = 1:1000) |> # 
-  mutate(data = map(sim, \(i) make_tea_data(n_total = 18, delta=1.5))) |>  # simulate
+  mutate(data = map(sim, \(i) make_tea_data(n_total = 36, delta=1.5))) |>  # simulate
   unnest(cols = data) # wrangle
 ```
 
 ...where you have 48 participants per experiment
 
+## Change n_total from 48 to 96
 ```{r}
 samps_highn <- tibble(sim = 1:1000) |> # 
-  mutate(data = map(sim, \(i) make_tea_data(n_total = 48, delta=1.5))) |>  # simulate
+  mutate(data = map(sim, \(i) make_tea_data(n_total = 96, delta=1.5))) |>  # simulate
   unnest(cols = data) # wrangle
 ```
 
@@ -133,6 +143,7 @@ tea_data_summary <- samps |>
 ```{r}
 tea_data_summary
 ```
+When the sample size increases, I do see some changes in the estimation of mean difference, but it is hard to tell the patterns of changing. 
 
 ```{r}
 tea_data_highn_summary <- samps_highn |>
@@ -146,6 +157,7 @@ tea_data_highn_summary <- samps_highn |>
 ```{r}
 tea_data_highn_summary
 ```
+Same as above 
 
 ## Plot difference for low-n
 
@@ -162,6 +174,7 @@ Or simply
 ```{r}
 hist(tea_data_summary$delta)
 ```
+Comparing to the small sample size (n_total = 18), the larger sample size (n_total = 36) suggest decrease in variability in the estimate of mean difference. The estimates are more consistent across simulations.
 
 ## Plot difference for higher-n
 
@@ -170,6 +183,7 @@ To do: What's different about this distribution vs the one we just plotted?
 ```{r}
 hist(tea_data_highn_summary$delta)
 ```
+When n_total = 96, the estimates are more consistent, and should be closer to the true population mean difference. 
 
 **Bonus** What happens if you run it again? Try varying the variance / mean of the effect when you change the "delta" and "sigma" values?
 
