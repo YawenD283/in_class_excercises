@@ -17,7 +17,6 @@ editor: visual
 ```{r}
 library(tidyverse)
 library(ggplot2) # plotting
-
 ```
 
 ## Define the simulation function - same as before
@@ -54,8 +53,7 @@ make_tea_data <- function(n_total = 48,
 
 ```{r}
 # YOUR CODE HERE
-
-
+tea_data <- make_tea_data(n_total = 100, delta = 2, sigma = 2) 
 ```
 
 ## 2. Creating the second experiment
@@ -75,8 +73,13 @@ Make your next dataframe A NEW NAME so that you're not rewriting old dataframes 
 Hint: you can use `to_sample = -3:3` with the `sample` function and specifies the possible values you want to sample from
 
 ```{r}
-# YOUR CODE HERE
+tea_data1 <- tea_data %>%
+  rowwise() %>%
+  mutate(rating_exp2 = rating + sample(-3:3, 1)) %>%
+  mutate(difference = rating_exp2 - rating) %>%
+  ungroup()
 
+head(tea_data1)
 ```
 
 ## 3. Make a plot and compute the correlation
@@ -85,8 +88,20 @@ Examine how the ratings are correlated across these simulations, by making a plo
 
 ```{R}
 # YOUR CODE HERE
-
+ggplot(data = tea_data1,aes(x = rating, y = rating_exp2)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method='lm') +
+  labs(x = "First Experiment Rating",
+       y = "Second Experiment Rating")
 ```
+```{r}
+ggplot(data = tea_data1, aes(x = rating, y = rating_exp2)) +
+  geom_jitter(width = 0.2, height = 0.2, alpha = 0.6) +
+  geom_smooth(method='lm') +
+  labs(x = "First Experiment Rating",
+       y = "Second Experiment Rating")
+```
+
 
 Hint: 1. Try out `geom_point` which shows you the exact values 2. Then try out `geom_jitter` which shows you the same data with some jitter around height / width
 
@@ -95,6 +110,7 @@ Bonus: 3. Use `alpha` to make your dots transparent 4. Use `ylab` and `xlab` to 
 Now examine -- how correlated are your responses? What is your test-retest reliability?
 
 ```{R}
+cor.test(tea_data1$rating, tea_data1$rating_exp2)
 ```
 
 Hint: You'll need a correlation function - `cor.test` Bonus: You can also find a ggplot function to overlay the correlation on top of your plot
