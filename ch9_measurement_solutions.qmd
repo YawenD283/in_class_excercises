@@ -75,7 +75,6 @@ Make your next dataframe A NEW NAME so that you're not rewriting old dataframes 
 
 Hint: you can use `to_sample = -3:3` with the `sample` function and specifies the possible values you want to sample from
 
-
 ```{r}
 # YOUR CODE HERE
 to_sample = -3:3
@@ -203,4 +202,3 @@ Hint: to get out the actual value from cor.test, you need to get the `estimate` 
 ```{r}
 corrected_split_half = (2*split_half_correlation_out) / (1+split_half_correlation_out)
 ```
-
