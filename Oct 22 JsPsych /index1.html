@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <title>RT Experiment</title>
+   <script src="https://unpkg.com/jspsych@8.0.0"></script>
+   <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+   <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@2.0.0"></script>
+   <script src="https://unpkg.com/@jspsych/plugin-preload@2.0.0"></script>
+   <script src="https://unpkg.com/@jspsych/plugin-survey-text@2.0.0"></script>
+   <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />   
+ </head>
+ <body>
+ </body>
+ <script>
+    // initialize jsPsych
+    var jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    });
+
+    // create timeline
+    var timeline = [];
+
+    // preload images
+    var preload = {
+        type: jsPsychPreload,
+        images: ['images/blue.png', 'images/orange.png']
+    };
+
+    timeline.push(preload);
+
+    // welcome trial
+    var welcome = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "Welcome to the experiment. Press any key to begin."
+    };
+
+    timeline.push(welcome);
+
+    // instructions trial
+    var instructions = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
+            <p>In this experiment, a circle will appear in the center 
+            of the screen.</p><p>If the circle is <strong>blue</strong>, 
+            press the letter B on the keyboard as fast as you can.</p>
+            <p>If the circle is <strong>orange</strong>, press the letter O 
+            as fast as you can.</p>
+            <p>Press any key to begin.</p>
+        `
+    };
+
+    timeline.push(instructions);
+
+    // blue trial
+    var blue_trial = {
+        type: jsPsychImageKeyboardResponse,
+        stimulus: 'images/blue.png',
+        choices: ['b', 'o'],  // Restrict to b and o
+        trial_duration: 5000,
+        prompt: "<p>Press the <strong>B</strong> key if the circle is blue and the <strong>O</strong> key if the circle is orange.</p>",
+        post_trial_gap: 500,
+        data: { correct_response: 'b' },
+        on_finish: function(data) {
+            if (data.response === data.correct_response) {
+                data.correct = true;
+            } else if (['b', 'o'].includes(data.response)) {
+                data.correct = false;
+            } else {
+                data.correct = null;  // For invalid key presses
+            }
+        }
+    };
+
+    // orange trial
+    var orange_trial = {
+        type: jsPsychImageKeyboardResponse,
+        stimulus: 'images/orange.png',
+        choices: ['b', 'o'],  // Restrict to b and o
+        trial_duration: 5000,
+        prompt: "<p>Press the <strong>B</strong> key if the circle is blue and the <strong>O</strong> key if the circle is orange.</p>",
+        post_trial_gap: 500,
+        data: { correct_response: 'o' },
+        on_finish: function(data) {
+            if (data.response === data.correct_response) {
+                data.correct = true;
+            } else if (['b', 'o'].includes(data.response)) {
+                data.correct = false;
+            } else {
+                data.correct = null;  // For invalid key presses
+            }
+        }
+    };
+
+    // feedback trial
+    var feedback_trial = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: function() {
+            var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+            if (last_trial_correct === true) {
+                return "<p>That was correct!</p>";
+            } else if (last_trial_correct === false) {
+                return "<p>Sorry, that was incorrect!</p>";
+            } else {
+                return "<p>Invalid key press! Please press 'B' for blue or 'O' for orange.</p>";
+            }
+        },
+        choices: "NO_KEYS",  // Replace jsPsych.NO_KEYS with "NO_KEYS"
+        trial_duration: 1000,  // Display feedback for 1 second
+        post_trial_gap: 500
+    };
+
+    // Add blue/orange trials and feedback to timeline
+    for (let i = 0; i < 10; i++) {
+        let random_trial = Math.random() > 0.5 ? blue_trial : orange_trial;
+        timeline.push(random_trial);
+        timeline.push(feedback_trial);
+    }
+
+    // create a survey trial
+    var survey_trial = {
+        type: jsPsychSurveyText,
+        questions: [
+            {prompt: "How old are you?", name: 'age', required: true},
+            {prompt: "What is your gender?", name: 'gender', required: true},
+            {prompt: "Do you have any comments about the experiment?", name: 'comments', rows: 4, columns: 50}
+        ],
+        button_label: "Submit"
+    };
+
+    timeline.push(survey_trial);
+
+    // start the experiment
+    jsPsych.run(timeline);
+
+ </script>
+</html>

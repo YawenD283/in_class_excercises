@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <!-- this is where we can load packages and files that we will use to help us build the experiment -->
+    <script src="https://unpkg.com/jspsych@8.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@2.0.0"></script>
+    <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+    
+    <!-- let’s give the experiment a title (good style) - but it’s not critical to make things work -->
+     <title>My experiment</title>
+ </head>
+ <body>
+    
+ </body>
+ <script>
+   const jsPsych = initJsPsych();
+
+   const hello_trial = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: 'Hello world!',
+      trial_duration: 3000
+    }
+
+    const image_trial = {
+      type: jsPsychImageKeyboardResponse,
+      stimulus: 'https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/001.png',
+      choices: [' '],
+      prompt: "<p>Press the spacebar to continue.</p>"
+    };
+
+    jsPsych.run([hello_trial, image_trial]);
+
+ </script>
+</html>
