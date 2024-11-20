@@ -168,6 +168,11 @@ Make a scatter plot that shows the relationship between the variables `depth` (o
 
 ```{r}
 # make practice plot 1 here
+ggplot(data = df.diamonds,
+       mapping = aes(x = depth,
+                     y = table,
+                     color = color)) +
+  geom_point()
 ```
 
 ```{r practice-plot1, fig.align="center", fig.cap="Practice plot 1.", fig.height=6, fig.width=8, out.width="95%"}
@@ -178,6 +183,11 @@ include_graphics("figures/vis1_practice_plot1.png")
 
 ```{r}
 # make advanced practice plot 1 here
+ggplot(data = df.diamonds,
+       mapping = aes(x = depth,
+                     y = table,
+                     color = color)) +
+  geom_point(alpha = 0.5)
 ```
 
 ```{r practice-plot1a, fig.align="center", fig.cap="Practice plot 1.", fig.height=6, fig.width=8, out.width="95%"}
@@ -272,6 +282,17 @@ Make a bar plot that shows the average `price` of diamonds (on the y-axis) as a 
 
 ```{r}
 # make practice plot 2 here
+ggplot(df.diamonds, aes(x = clarity, y = price)) +
+  stat_summary(fun = "mean", 
+               geom = "col", 
+               fill = "pink", 
+               color = "orange") +
+  stat_summary(fun.data = "mean_cl_boot", 
+               geom = "linerange", 
+               color = "black") +
+  labs(x = "Clarity", 
+       y = "Price") +
+  theme_minimal()
 ```
 
 ```{r practice-plot2, out.width="90%", fig.align="center", fig.cap="Practice plot 2.", out.width="95%"}
@@ -282,6 +303,17 @@ include_graphics("figures/vis1_practice_plot2.png")
 
 ```{r}
 # make advanced practice plot 2 here
+ggplot(df.diamonds, aes(x = clarity, y = price)) +
+  stat_summary(fun = "mean", 
+               geom = "col", 
+               fill = "lightblue", 
+               color = "black") +
+  stat_summary(fun.data = "mean_cl_boot", 
+               geom = "linerange", 
+               color = "black",
+               size = 1.5) +
+  labs(x = "Clarity", 
+       y = "Price") 
 ```
 
 ```{r practice-plot2a, out.width="90%", fig.align="center", fig.cap="Practice plot 2.", out.width="95%"}
@@ -370,6 +402,21 @@ Recreate the plot shown in Figure \@ref(fig:practice-plot3).
 
 ```{r}
 # make practice plot 3 here
+ggplot(df.diamonds, aes(x = color, 
+                        y = price, 
+                        group = clarity, 
+                        color = clarity)) +
+  stat_summary(fun = "mean", 
+               geom = "line", 
+               size = 1) +
+  stat_summary(fun.data = "mean_cl_boot", 
+               geom = "errorbar", 
+               width = 0, 
+               size = 0.8) + 
+  labs(x = "Color", 
+       y = "Price") + 
+  scale_color_viridis_d(option = "D", end = 0.9) +
+  theme_minimal()
 ```
 
 ```{r practice-plot3, out.width="90%", fig.align="center", fig.cap="Practice plot 3.", out.width="95%"}
