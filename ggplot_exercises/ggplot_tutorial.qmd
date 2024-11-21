@@ -2,7 +2,7 @@
 title: 'ggplot2 intro exercises'
 author: "Mike Frank, Edited Bria Long"
 date: "Fall 2024"
-output: html
+output: html_document
 ---
   
 This is an exercise on using `ggplot2` that was adapted by Mike Frank
@@ -69,6 +69,10 @@ Now you can try writing this as a single set of additions (e.g. one line of R co
 
 ```{r}
 ## Your code here
+
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point() +
+  geom_point(aes(colour = carat))
 ```
 
 
@@ -88,9 +92,32 @@ ggplot(
 ```
 
 One of the primary benefits of `ggplot2` is the use of facets - also known as small multiples in the Tufte vocabulary. That last plot was probably hard to read. Facets could make it better. Try adding `facet_grid(x ~ y)`.  `x ~ y` means row facets are by `x`, column facets by `y`. 
+```{r}
+table(diamonds$clarity, diamonds$cut)
+```
 
 ```{r}
 ## YOUR CODE HERE
+ggplot(
+  diamonds,
+  aes(x = carat, 
+      y = price,
+      shape = clarity, 
+      color = cut)) +
+  geom_point() +
+  facet_grid(cut ~ clarity)
+```
+
+```{r}
+ggplot(
+  diamonds %>% filter(clarity %in% c("VVS1", "IF")),
+  aes(
+    x = carat, y = price,
+    shape = clarity, color = cut
+  )
+) +
+  geom_point(size = 2, alpha = 0.8) +
+  facet_grid(cut ~ clarity)
 ```
 
 But facets can also get overwhelming. Try to strike a good balance between color, shape, and faceting. 
@@ -98,7 +125,19 @@ But facets can also get overwhelming. Try to strike a good balance between color
 HINT: `facet_grid(. ~ x)` puts x on the columns, but `facet_wrap(~ x)` (no dot) *wraps* the facets. 
 
 ```{r}
-
+ggplot(
+  diamonds,
+  aes(
+    x = carat, y = price,
+    shape = clarity, color = cut
+  )
+) +
+  geom_point(size = 1) + 
+  facet_wrap(~ cut) + 
+  labs(
+    x = "Carat",
+    y = "Price") +
+  theme_minimal() 
 ```
 
 
@@ -111,16 +150,23 @@ Let's try adding some geoms and manipulating their parameters. One combo I reall
 ```{r}
 ggplot(diamonds, aes(x = carat, y = price)) +
   geom_point(shape = ".") +
-  facet_grid(cut ~ clarity) 
-## ADD TO THIS PLOT WITH YOUR CODE HERE
+  ## ADD TO THIS PLOT WITH YOUR CODE HERE
+  geom_smooth(method = "loess", se = FALSE, color = "red", size = 0.5) +
+  facet_grid(cut ~ clarity)
 ```
 
 
 CHALLENGE: You could also try starting with a histogram and adding densities. (`geom_density`), Try [this link](https://stackoverflow.com/questions/5688082/ggplot2-overlay-histogram-with-density-curve).
 
 ```{r}
-
+ggplot(diamonds, aes(x = price, fill = cut)) +
+  geom_histogram(aes(y = ..density..), binwidth = 500, alpha = 0.6, position = "stack") + 
+  geom_density(aes(color = cut), size = 1) +
+  labs(
+    x = "Price",
+    y = "Density")
 ```
+
 
 # Themes and plot cleanup
 
@@ -147,6 +193,24 @@ ggplot(diamonds, aes(
 ## YOUR CODE HERE -- no "correct" answer, just play around with making it look better
 
 # Change facets, transparency, fix axis labels, etc.
+ggplot(diamonds, aes(
+  x = carat, y = price,
+  col = cut
+)) +
+  geom_point(alpha = 0.8, size = 0.8) +
+  facet_wrap(~clarity, ncol = 4) +
+  scale_color_viridis_d(option = "viridis") +
+  labs(
+    x = "Carat",
+    y = "Price",
+    color = "Diamond Cut"
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "right",
+    strip.text = element_text(size = 12, face = "bold")
+  )
 ```
 
 

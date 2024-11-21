@@ -587,8 +587,7 @@ ggplot(data = df.diamonds,
                width = 0.2) + 
   facet_grid(rows = vars(clarity)) +
   labs(x = "Color", 
-       y = "Price", 
-       title = "Diamond Price by Color, Cut, and Clarity") +
+       y = "Price")+
   scale_fill_viridis_d(option = "D", end = 0.9) 
 
 ```
